@@ -1,0 +1,19 @@
+version: '1.0'
+name: currency-converter
+endpoints:
+  - handler: converter
+    path: /convert
+    method: post
+  - handler: analytics
+    path: /analytics
+    method: get
+
+container:
+  image: cr.yandex/${REGISTRY_ID}/currency-converter:v1
+  resources:
+    memory: 256MB
+    cores: 1
+  concurrency: 8
+  env:
+    - name: PYTHONUNBUFFERED
+      value: "1"
