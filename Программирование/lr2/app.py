@@ -3,8 +3,8 @@ from converter import app as converter_app
 from analytics import app as analytics_app
 
 if __name__ == '__main__':
-    converter_process = Process(target=converter_app.run, kwargs={'port': 5000, 'host': '0.0.0.0'})
-    analytics_process = Process(target=analytics_app.run, kwargs={'port': 5001, 'host': '0.0.0.0'})
+    converter_process = Process(target=converter_app.run, kwargs={'port': 8080, 'host': '0.0.0.0'})
+    analytics_process = Process(target=analytics_app.run, kwargs={'port': 8081, 'host': '0.0.0.0'})
 
     converter_process.start()
     analytics_process.start()

@@ -1,15 +1,8 @@
 version: '1.0'
 name: currency-converter
-endpoints:
-  - handler: converter
-    path: /convert
-    method: post
-  - handler: analytics
-    path: /analytics
-    method: get
 
 container:
-  image: cr.yandex/${REGISTRY_ID}/currency-converter:v1
+  image: cr.yandex/crpkr28qghq16h1feno9/currency-converter:v1
   resources:
     memory: 256MB
     cores: 1
@@ -17,3 +10,7 @@ container:
   env:
     - name: PYTHONUNBUFFERED
       value: "1"
+    - name: CONVERTER_PORT
+      value: "8080"
+    - name: ANALYTICS_PORT
+      value: "8081"

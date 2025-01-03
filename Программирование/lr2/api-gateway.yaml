@@ -1,0 +1,31 @@
+openapi: 3.0.0
+info:
+  title: Currency Service API
+  version: 1.0.0
+
+paths:
+  /convert:
+    get:
+      x-yc-apigateway-integration:
+        type: http
+        url: https://bbaua1ll6sfnl62n3mug.containers.yandexcloud.net/convert
+        service_account_id: aje2nb60of06189o2so0
+    post:
+      x-yc-apigateway-integration:
+        type: http
+        url: https://bbaua1ll6sfnl62n3mug.containers.yandexcloud.net/convert
+        service_account_id: aje2nb60of06189o2so0
+
+  /analytics:
+    get:
+      x-yc-apigateway-integration:
+        type: http
+        url: https://bbaua1ll6sfnl62n3mug.containers.yandexcloud.net/analytics
+        service_account_id: aje2nb60of06189o2so0
+
+  /health:
+    get:
+      x-yc-apigateway-integration:
+        type: http
+        url: https://bbaua1ll6sfnl62n3mug.containers.yandexcloud.net/health
+        service_account_id: aje2nb60of06189o2so0 
