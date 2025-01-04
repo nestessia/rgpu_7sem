@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="card-title text-center mb-4">Регистрация</h2>
+
+                    <form method="post">
+                        {% csrf_token %}
+                        {% for field in form %}
+                        <div class="mb-3">
+                            {{ field.label_tag }}
+                            {{ field }}
+                            {% if field.errors %}
+                            <div class="alert alert-danger">
+                                {{ field.errors }}
+                            </div>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                        <button type="submit" class="btn btn-primary w-100">Зарегистрироваться</button>
+                    </form>
+
+                    <div class="text-center mt-4">
+                        <p>Или зарегистрируйтесь через:</p>
+                        <div class="d-grid gap-2">
+                            <a href="{% url 'social:begin' 'google-oauth2' %}" class="btn btn-danger">
+                                <i class="fab fa-google"></i> Google
+                            </a>
+                            <a href="{% url 'social:begin' 'github' %}" class="btn btn-dark">
+                                <i class="fab fa-github"></i> GitHub
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="text-center mt-3">
+                        <p>Уже есть аккаунт? <a href="{% url 'users:login' %}">Войдите</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

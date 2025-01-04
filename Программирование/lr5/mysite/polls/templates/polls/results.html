@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% load poll_extras %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>{{ question.question_text }}</h1>
+    <p class="text-muted">
+        Тип опроса: 
+        {% if question.question_type == 'single' %}
+            Один вариант ответа
+        {% elif question.question_type == 'multiple' %}
+            Несколько вариантов ответа
+        {% else %}
+            Текстовый ответ
+        {% endif %}
+    </p>
+
+    {% if question.question_type == 'text' %}
+        {% if text_answers %}
+            <div class="list-group mt-3">
+                {% for answer in text_answers %}
+                <div class="list-group-item">
+                    {{ answer }}
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p>Пока нет ответов.</p>
+        {% endif %}
+    {% else %}
+        <div class="list-group mt-3">
+            {% with total_votes=question.choice_set.all|sum:'votes' %}
+            {% for choice in question.choice_set.all %}
+            <div class="list-group-item">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5 class="mb-1">{{ choice.choice_text }}</h5>
+                        <small class="text-muted">{{ choice.votes }} голос{{ choice.votes|pluralize:",'а,'ов" }}</small>
+                    </div>
+                    <div class="progress" style="width: 60%;">
+                        {% with vote_percent=choice.votes|multiply:100|divide:total_votes|default:0 %}
+                        <div class="progress-bar" role="progressbar" 
+                             style="width: {{ vote_percent }}%;" 
+                             aria-valuenow="{{ vote_percent }}" 
+                             aria-valuemin="0" 
+                             aria-valuemax="100">
+                            {{ vote_percent|floatformat:1 }}%
+                        </div>
+                        {% endwith %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            
+            <div class="mt-3">
+                <p>Всего голосов: {{ total_votes }}</p>
+            </div>
+            {% endwith %}
+        </div>
+    {% endif %}
+
+    <div class="mt-4">
+        <a href="{% url 'polls:detail' question.id %}" class="btn btn-primary">Голосовать снова</a>
+        <a href="{% url 'polls:index' %}" class="btn btn-secondary">Вернуться к списку опросов</a>
+    </div>
+</div>
+{% endblock %}
