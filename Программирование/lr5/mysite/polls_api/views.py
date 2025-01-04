@@ -2,34 +2,39 @@ from rest_framework import generics, filters
 from django.db.models import Count
 from polls.models import Question
 from polls.serializers import QuestionSerializer
+from rest_framework.views import APIView
+from rest_framework.response import Response
 
 
-class QuestionListAPI(generics.ListAPIView):
-    serializer_class = QuestionSerializer
-    filter_backends = [filters.OrderingFilter]
-    ordering_fields = ['pub_date', 'choice__votes']
+class QuestionListAPI(APIView):
+    def get(self, request):
+        questions = Question.objects.all()
 
-    def get_queryset(self):
-        queryset = Question.objects.annotate(
-            total_votes=Count('choice__votes')
-        ).all()
+        # Фильтрация по датам
+        date_from = request.query_params.get('date_from')
+        if date_from:
+            questions = questions.filter(pub_date__gte=date_from)
 
-        # Фильтрация по дате
-        start_date = self.request.query_params.get('start_date', None)
-        end_date = self.request.query_params.get('end_date', None)
-        if start_date:
-            queryset = queryset.filter(pub_date__gte=start_date)
-        if end_date:
-            queryset = queryset.filter(pub_date__lte=end_date)
+        date_to = request.query_params.get('date_to')
+        if date_to:
+            questions = questions.filter(pub_date__lte=date_to)
 
-        # Сортировка
-        sort_by = self.request.query_params.get('sort_by', None)
-        if sort_by == 'date':
-            queryset = queryset.order_by('-pub_date')
-        elif sort_by == 'votes':
-            queryset = queryset.order_by('-total_votes')
+        # Фильтрация по типу вопроса
+        question_type = request.query_params.get('question_type')
+        if question_type:
+            questions = questions.filter(question_type=question_type)
 
-        return queryset
+        # Сериализация данных
+        data = []
+        for question in questions:
+            data.append({
+                'id': question.id,
+                'question_text': question.question_text,
+                'pub_date': question.pub_date,
+                'question_type': question.question_type
+            })
+        
+        return Response(data)
 
 
 class QuestionDetailAPI(generics.RetrieveAPIView):

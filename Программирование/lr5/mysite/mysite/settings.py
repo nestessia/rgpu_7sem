@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     'rest_framework',
     'polls.apps.PollsConfig',
+    'users.apps.UsersConfig',
     'polls_api.apps.PollsApiConfig',
     'polls_export.apps.PollsExportConfig',
     'allauth',

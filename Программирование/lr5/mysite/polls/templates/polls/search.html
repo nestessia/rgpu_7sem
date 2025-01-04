@@ -1,0 +1,176 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <!-- Форма поиска -->
+        <div class="col-12 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Поиск голосований</h5>
+                    <form id="searchForm" class="row g-3">
+                        <div class="col-md-4">
+                            <label for="dateFrom" class="form-label">Дата от</label>
+                            <input type="date" class="form-control" id="dateFrom">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="dateTo" class="form-label">Дата до</label>
+                            <input type="date" class="form-control" id="dateTo">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="questionType" class="form-label">Тип вопроса</label>
+                            <select class="form-select" id="questionType">
+                                <option value="">Все</option>
+                                <option value="single">С одним вариантом</option>
+                                <option value="multiple">С несколькими вариантами</option>
+                                <option value="text">Текстовый ответ</option>
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-primary">Поиск</button>
+                            <button type="button" class="btn btn-success ms-2" id="exportBtn">
+                                Экспортировать результаты
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Результаты поиска -->
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Найденные голосования</h5>
+                    <div id="questionsList" class="list-group">
+                        <!-- Здесь будут отображаться найденные голосования -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Детали голосования -->
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Детали голосования</h5>
+                    <div id="questionDetails">
+                        <!-- Здесь будут отображаться детали выбранного голосования -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchForm = document.getElementById('searchForm');
+    const questionsList = document.getElementById('questionsList');
+    const questionDetails = document.getElementById('questionDetails');
+    const exportBtn = document.getElementById('exportBtn');
+
+    // Обработка отправки формы поиска
+    searchForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const dateFrom = document.getElementById('dateFrom').value;
+        const dateTo = document.getElementById('dateTo').value;
+        const questionType = document.getElementById('questionType').value;
+        
+        // Формируем параметры запроса
+        const params = new URLSearchParams();
+        if (dateFrom) params.append('date_from', dateFrom);
+        if (dateTo) params.append('date_to', dateTo);
+        if (questionType) params.append('question_type', questionType);
+        
+        try {
+            const response = await fetch(`/api/polls/?${params.toString()}`);
+            const data = await response.json();
+            
+            // Очищаем список
+            questionsList.innerHTML = '';
+            
+            // Отображаем результаты
+            data.forEach(question => {
+                const item = document.createElement('a');
+                item.href = '#';
+                item.className = 'list-group-item list-group-item-action';
+                item.textContent = question.question_text;
+                item.dataset.questionId = question.id;
+                
+                item.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    loadQuestionDetails(question.id);
+                });
+                
+                questionsList.appendChild(item);
+            });
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    });
+
+    // Загрузка деталей голосования
+    async function loadQuestionDetails(questionId) {
+        try {
+            const response = await fetch(`/api/polls/${questionId}/`);
+            const question = await response.json();
+            
+            let detailsHtml = `
+                <h4>${question.question_text}</h4>
+                <p>Дата публикации: ${new Date(question.pub_date).toLocaleString()}</p>
+                <p>Тип: ${getQuestionTypeText(question.question_type)}</p>
+            `;
+            
+            if (question.question_type === 'text') {
+                detailsHtml += '<h5>Ответы:</h5><ul>';
+                question.answers.forEach(answer => {
+                    detailsHtml += `<li>${answer.text}</li>`;
+                });
+                detailsHtml += '</ul>';
+            } else {
+                detailsHtml += '<h5>Варианты ответов:</h5>';
+                const totalVotes = question.choices.reduce((sum, choice) => sum + choice.votes, 0);
+                
+                question.choices.forEach(choice => {
+                    const percentage = totalVotes ? ((choice.votes / totalVotes) * 100).toFixed(1) : 0;
+                    detailsHtml += `
+                        <div class="mb-2">
+                            <div>${choice.text} (${choice.votes} голосов, ${percentage}%)</div>
+                            <div class="progress">
+                                <div class="progress-bar" role="progressbar" 
+                                     style="width: ${percentage}%" 
+                                     aria-valuenow="${percentage}" 
+                                     aria-valuemin="0" 
+                                     aria-valuemax="100"></div>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+            
+            questionDetails.innerHTML = detailsHtml;
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    }
+
+    // Обработка экспорта
+    exportBtn.addEventListener('click', function() {
+        const format = window.confirm('Выберите формат:\nOK - JSON\nCancel - CSV') ? 'json' : 'csv';
+        window.location.href = `/api/export/.${format}`;
+    });
+
+    // Вспомогательная функция для получения текста типа вопроса
+    function getQuestionTypeText(type) {
+        const types = {
+            'single': 'С одним вариантом',
+            'multiple': 'С несколькими вариантами',
+            'text': 'Текстовый ответ'
+        };
+        return types[type] || type;
+    }
+});
+</script>
+{% endblock %} 

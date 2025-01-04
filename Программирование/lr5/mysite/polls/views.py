@@ -143,3 +143,7 @@ def create_poll(request):
         'question_form': question_form,
         'choice_formset': choice_formset
     })
+
+
+def search_view(request):
+    return render(request, 'polls/search.html')
