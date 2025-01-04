@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Создать новый опрос</h2>
+    <form method="post">
+        {% csrf_token %}
+        
+        <div class="mb-3">
+            {{ question_form.question_text.label_tag }}
+            {{ question_form.question_text }}
+        </div>
+        
+        <div class="mb-3">
+            {{ question_form.question_type.label_tag }}
+            {{ question_form.question_type }}
+        </div>
+        
+        <div id="choices-container">
+            <h4>Варианты ответов</h4>
+            {{ choice_formset.management_form }}
+            {% for choice_form in choice_formset %}
+                <div class="mb-3">
+                    {{ choice_form.choice_text.label_tag }}
+                    {{ choice_form.choice_text }}
+                </div>
+            {% endfor %}
+        </div>
+        
+        <button type="submit" class="btn btn-primary">Создать опрос</button>
+    </form>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var questionType = document.getElementById('id_question_type');
+    var choicesContainer = document.getElementById('choices-container');
+    
+    function toggleChoices() {
+        if (questionType.value === 'text') {
+            choicesContainer.style.display = 'none';
+        } else {
+            choicesContainer.style.display = 'block';
+        }
+    }
+    
+    questionType.addEventListener('change', toggleChoices);
+    toggleChoices(); // Вызываем сразу для установки начального состояния
+});
+</script>
+{% endblock %}
