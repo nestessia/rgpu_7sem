@@ -1,0 +1,10 @@
+E:\Repositories\vladik\Rabbit\demo\src\main\java\com\example\rabbit\config\RabbitMQConfig.java
+E:\Repositories\vladik\Rabbit\demo\src\main\java\com\example\rabbit\controllers\ProducerController.java
+E:\Repositories\vladik\Rabbit\demo\src\main\java\com\example\rabbit\controllers\PublisherController.java
+E:\Repositories\vladik\Rabbit\demo\src\main\java\com\example\rabbit\notifications\Publisher.java
+E:\Repositories\vladik\Rabbit\demo\src\main\java\com\example\rabbit\notifications\PublisherWithRouting.java
+E:\Repositories\vladik\Rabbit\demo\src\main\java\com\example\rabbit\notifications\Subscriber.java
+E:\Repositories\vladik\Rabbit\demo\src\main\java\com\example\rabbit\notifications\SubscriberWithRouting.java
+E:\Repositories\vladik\Rabbit\demo\src\main\java\com\example\rabbit\RabbitApplication.java
+E:\Repositories\vladik\Rabbit\demo\src\main\java\com\example\rabbit\tasks\Consumer.java
+E:\Repositories\vladik\Rabbit\demo\src\main\java\com\example\rabbit\tasks\Producer.java

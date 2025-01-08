@@ -1,0 +1,10 @@
+com\example\rabbit\RabbitApplication.class
+com\example\rabbit\tasks\Producer.class
+com\example\rabbit\notifications\Publisher.class
+com\example\rabbit\notifications\Subscriber.class
+com\example\rabbit\notifications\SubscriberWithRouting.class
+com\example\rabbit\controllers\PublisherController.class
+com\example\rabbit\tasks\Consumer.class
+com\example\rabbit\config\RabbitMQConfig.class
+com\example\rabbit\controllers\ProducerController.class
+com\example\rabbit\notifications\PublisherWithRouting.class
