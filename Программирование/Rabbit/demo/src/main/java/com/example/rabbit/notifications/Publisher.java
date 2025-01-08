@@ -11,7 +11,7 @@ public class Publisher {
     private RabbitTemplate rabbitTemplate;
 
     public void publishMessage(String message) {
-        rabbitTemplate.convertAndSend("logs", "", message); // Не указываем routingKey, для fanout
+        rabbitTemplate.convertAndSend("logs", "", message);
         System.out.println("Published: " + message);
     }
 }

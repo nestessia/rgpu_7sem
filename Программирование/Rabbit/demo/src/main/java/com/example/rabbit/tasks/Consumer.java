@@ -9,6 +9,5 @@ public class Consumer {
     @RabbitListener(queues = "task_queue")
     public void receiveMessage(String message) {
         System.out.println("Received: " + message);
-        // Здесь можете добавить логику обработки задачи
     }
 }

@@ -13,7 +13,7 @@ public class Producer {
 
     public void sendTask(String message) {
         rabbitTemplate.convertAndSend("task_queue", message, m -> {
-            m.getMessageProperties().setDeliveryMode(MessageProperties.DEFAULT_DELIVERY_MODE); // PERSISTENT
+            m.getMessageProperties().setDeliveryMode(MessageProperties.DEFAULT_DELIVERY_MODE);
             return m;
         });
         System.out.println("Sent: " + message);

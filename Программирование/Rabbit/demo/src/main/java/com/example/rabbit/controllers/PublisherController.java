@@ -24,10 +24,8 @@ public class PublisherController {
     public ResponseEntity<String> publishMessage(@RequestParam String message, @RequestParam(required = false) String routingKey) {
         String queue = routingKey != null ? exchangeName : fallbackName;
         if (routingKey != null) {
-            // Если ключ маршрутизации присутствует
             rabbitTemplate.convertAndSend(queue, routingKey, message);
         } else {
-            // Если ключ маршрутизации не указан, отправляем в fallback очередь
             rabbitTemplate.convertAndSend(queue, "", message);
         }
 
